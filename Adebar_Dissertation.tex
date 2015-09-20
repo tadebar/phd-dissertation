@@ -1,0 +1,108 @@
+\documentclass[12pt,twoside]{report}
+\setcounter{secnumdepth}{3}
+% note that the document can be single or double sided.  
+\usepackage[hidelinks]{hyperref}
+\hypersetup{linktocpage}
+\usepackage{suthesis-2e}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfig}
+
+\usepackage{rotating}
+\usepackage{tabu}
+\usepackage[table]{xcolor}
+\definecolor{lightgray}{gray}{0.95}
+\definecolor{averagegray}{gray}{0.9}
+\definecolor{darkgray}{gray}{0.6}
+%\usepackage{fancyhdr}
+%
+%\pagestyle{fancy}
+%\usepackage{calc}
+%\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+%\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+%\fancyhf{}
+%\fancyhead[LE,RO]{\bfseries}
+%\fancyhead[LO]{\bfseries\rightmark}
+%\fancyhead[RE]{\bfseries\leftmark}
+%\fancyfoot[CE,CO]{\thepage}
+%\fancypagestyle{plain}{%
+%}
+%\pagestyle{headings}
+
+% Algorithms
+%\usepackage{algorithmic}
+%\usepackage{algorithm}
+%\usepackage{textcomp}
+%\usepackage{tabularx}
+%\usepackage[table]{xcolor}
+%\usepackage{color, colortbl}
+%\usepackage{tikz}
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\pretolerance=500                                       %Quick fix for line overflows
+%\tolerance=\pretolerance                                %Quick fix for line overflows
+
+\begin{document}
+
+% Change page number to roman numerals
+\renewcommand{\thepage}{\roman{page}}% Roman page numbers
+
+%======================================================================
+\title{Ultrasound-Guided Robotic Needle Steering\\
+            for Percutaneous Interventions in the Liver}
+\author{Troy Adebar}
+\dept{Mechanical Engineering}
+%======================================================================
+\principaladviser{Allison M. Okamura}
+\firstreader{Mark Cutkosky}
+\secondreader{Steven Rock}
+ 
+\beforepreface
+%======================================================================
+% ABSTRACT
+%======================================================================
+\prefacesection{Abstract}
+
+Haptic devices aim to render a realistic sense of touch using kinesthetic and tactile feedback. Kinesthetic feedback provides forces and torques that affect the motion and orientation of the user’s hand or arm. Tactile feedback stimulates cutaneous receptors in the user’s skin. Currently, most commercial haptic devices provide only kinesthetic feedback due to its intuitiveness and ability to convey multi-degree-of-freedom information to the user. However, kinesthetic feedback can potentially be destabilizing. In contrast, tactile feedback can be used to create the perception of forces and torques without physically imparting these forces and torques to the user, and is not destabilizing. However, conveying multi-degree-of-freedom force and torque information in a manner that is intuitive to a human user can be challenging. 
+
+This thesis focuses on the design, development, and experimental validation of a class of tactile feedback devices that provide feedback using local fingerpad skin deformation. Fingerpad skin deformation occurs in our daily interaction with objects, feels natural, and can intuitively express many degrees-of-freedom. Skin deformation tactile feedback can provide force and torque information through skin deformation cues on multiple fingers in a manner that is consistent with our interaction with external objects.
+
+This thesis describes several novel skin deformation feedback devices and shows in human participant studies that skin deformation feedback influences perception of stiffness. Skin deformation feedback can be used in conjunction with force feedback to improve the perception of stiffness of virtual surfaces, and can also be employed for sensory substitution and augmentation of force and/or torque information during manipulation of objects in virtual environment or teleoperation scenarios. When skin deformation feedback was used as a form of sensory substitution to convey force/torque information, study participants improved task performance compared to when no feedback was given. When skin deformation feedback was used to augment kinesthetic feedback to provide additional force/torque information, subject participants showed improvements in task performance compared to only kinesthetic feedback.
+
+The results of this thesis show that skin deformation tactile feedback is intuitive, and can be used to convey force and torque information to substitute, or augment, kinesthetic feedback. Skin deformation tactile feedback is particularly useful in scenarios where the provision of kinesthetic force and/or torque feedback is difficult, notably in teleoperated robot-assisted surgery, where kinesthetic feedback may cause instability. 
+
+
+%======================================================================
+% Acknowledgements
+%======================================================================
+\prefacesection{Acknowledgements}
+
+%\afterpreface
+
+% =================================== Commands in '\afterpreface' ========================================
+% Generate the table of content
+\tableofcontents
+
+% Generate the list of tables
+\listoftables
+
+% Generate the list of figures
+\listoffigures
+
+ 
+\pagestyle{headings}
+%\fancypagestyle{plain}{%
+%\fancyhead[LE,RO]{\slshape \rightmark}
+%\fancyfoot[C]{\thepage}}
+
+
+% Change page number to arabic numbers
+\renewcommand{\thepage}{\arabic{page}}% Arabic page numbers
+% ========================================================================================================
+
+\input{CHAPTER_1}
+
+
+\bibliographystyle{plain}
+\bibliography{References/Chapter_1,References/Chapter_2,References/Chapter_3,References/Chapter_4,References/Chapter_5,References/Chapter_6}
+\end{document}
