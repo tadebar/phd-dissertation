@@ -1,0 +1,11 @@
+# Untracked latex build files
+*.aux
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+*.toc
+
+# The compiled manuscript itself
+Adebar_Dissertation.pdf
