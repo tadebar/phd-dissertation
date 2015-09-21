@@ -6,6 +6,8 @@
 *.out
 *.synctex.gz
 *.toc
+*.bbl
+*.blg
 
 # The compiled manuscript itself
 Adebar_Dissertation.pdf
