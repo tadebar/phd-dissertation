@@ -4,14 +4,19 @@
 \usepackage[hidelinks]{hyperref}
 \hypersetup{linktocpage}
 \usepackage{suthesis-2e}
-\usepackage{amsmath}
+\usepackage[cmex10]{amsmath}
+\usepackage{amssymb}
+\usepackage{undertilde}
 \usepackage[pdftex]{graphicx}
 \DeclareGraphicsExtensions{.pdf,.jpeg,.png,.jpg,.tif}
-\usepackage{subfig}
+%\usepackage{subfig}
+\usepackage[tight,footnotesize]{subfigure}
 
+\usepackage{bm}
 \usepackage{rotating}
-\usepackage{tabu}
+\usepackage{tabulary}
 \usepackage[table]{xcolor}
+
 \definecolor{lightgray}{gray}{0.95}
 \definecolor{averagegray}{gray}{0.9}
 \definecolor{darkgray}{gray}{0.6}
@@ -95,9 +100,11 @@ I'd like to thank my dog and my woman.
 \renewcommand{\thepage}{\arabic{page}}% Arabic page numbers
 % ========================================================================================================
 
-\input{CHAPTER_1}
+\input{Chapter_1}
+\input{Chapter_2}
+\input{Chapter_3}
 
 
-\bibliographystyle{plain}
+\bibliographystyle{IEEEtran}
 \bibliography{Adebar_Dissertation}
 \end{document}
