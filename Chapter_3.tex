@@ -5,7 +5,7 @@ Experimental validation of the different needle steering techniques has been per
 \begin{figure*}[!t]
 \centering
 \includegraphics[width = \textwidth]{Images/Chapter3/Abaqus/Abaqus}%
-\caption{Planar finite-element model of needle-tissue interaction: (a) The tissue was modeled as a square specimen with side length of 40~mm, with complete 3DOF constraints on three sides. A coarse quadrilateral mesh was used for most of the tissue, with a finer triangular mesh in the neighborhood of the needle tip. The needle tip was modeled as a rigid body, while the tissue was modeled as an incompressible hyperelastic solid. (b) The input to the model was horizontal displacement $\delta x$ of the needle. The output from the model was the rotation of the needle $\delta\theta$ and vertical displacement $\delta y$. These were used to calculate radius of curvature $\rho$. (c) After insertion, stress developed in the tissue, and was highest near the tip of the needle.}
+\caption[Planar finite-element model of needle-tissue interaction]{Planar finite-element model of needle-tissue interaction: (a) The tissue was modeled as a square specimen with side length of 40~mm, with complete 3DOF constraints on three sides. A coarse quadrilateral mesh was used for most of the tissue, with a finer triangular mesh in the neighborhood of the needle tip. The needle tip was modeled as a rigid body, while the tissue was modeled as an incompressible hyperelastic solid. (b) The input to the model was horizontal displacement $\delta x$ of the needle. The output from the model was the rotation of the needle $\delta\theta$ and vertical displacement $\delta y$. These were used to calculate radius of curvature $\rho$. (c) After insertion, stress developed in the tissue, and was highest near the tip of the needle.}
 \label{fig:Abaqus}
 \end{figure*}
 
@@ -17,14 +17,60 @@ Although we previously reported radius-of-curvature values close to or below 50~
  
 This paper is divided into two main sections. In Section~\ref{sec:TipGeometryAnalysis}, we describe finite-element (FE) modeling and experimental testing undertaken to improve understanding of needle-tissue interaction during bent-tip needle steering. In Section~\ref{sec:Articulated-TipNeedle}, we describe the design and validation of a new articulated-tip steerable needle, which uses changes in tip geometry, as suggested by the results of Section~\ref{sec:TipGeometryAnalysis}, to achieve tighter curvature in liver tissue than any comparable technique.
 
+\section{Procedure-Specific Workspace Analysis}
+An open-source contrast-enhanced abdominal CT scan of a healthy 36-year-old male was analyzed~\cite{Pieper2004}. The segmented liver capsule was exported from 3D SLICER, refined using MESHLAB, and imported into MATLAB to serve as a workspace boundary. Similarly, large-diameter portions of the internal vasculature which represent a significant bleeding risk (specifically the hepatic and portal veins with diameter over approximately 5 mm) were imported to serve as obstacles. These models are shown in Fig.~\ref{fig:Meshes3D}. 
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width = 0.5\textwidth]{Images/Chapter3/Meshes3D/Meshes3D}%
+\caption[Models of the liver anatomy]{Models of the liver boundary (capsule), large hepatic veins (green) and large portal veins (blue). The entry vectors are also indicated. The superior-inferior (SI), medial-lateral (ML), and anterior-posterior (AP) directions are shown.}
+\label{fig:Meshes3D}
+\end{figure*}
+
+Two entry vectors $v^{(i)}$ were defined based on typical introducer placement for percutaneous RFA of liver tumors. Vector $v^{(1)}$ represents an intercostal approach into the right liver. Vector $v^{(2)}$ represents an anterior subcostal approach under the costal margin into the left liver. Both orientations reflect insertion under ultrasound guidance with the needle at 45° to the transducer axis. 
+
+For each $v^{(i)}$, the corresponding reachable workspace $R^{(i)}$ was measured by discretizing the liver volume $L$ (excluding the vasculature) into 4-mm voxels, and determining if each voxel could be reached by a permissible path. Paths that crossed the liver boundary (capsule) or vasculature were excluded to decrease risk of bleeding and other complications. Paths were also restricted to have one or two constant-curvature sections. Although insertion and rotation of a bent-tip steerable needle can theoretically generate more complex needle paths, in practice the mechanical properties of liver cause these complicated paths to relax into simpler paths.  After the direction change, rather than forming a path with distinct tangent sections as predicted, the needle relaxed by 10.3~mm to a constant curvature path. Two-section paths were excluded if the waypoint was already beyond the target (i.e., if the dot product of the vector from the waypoint to the target and the tangent vector at the waypoint was negative) to avoid impractical looping behavior. Finally, paths were excluded if they required radius of curvature ρ below threshold ρmin, which was varied as a parameter from 10-200~mm. Fig.~\ref{fig:Paths} shows examples of permissible and excluded paths. 
+ 
+\begin{figure*}[!t]
+\centering
+\includegraphics[width = 0.5\textwidth]{Images/Chapter3/Paths/Paths}%
+\caption[Excluded and permissible paths]{Reachable and unreachable voxels within L, and lines showing, from left to right, an excluded path that violates ρmin, an excluded path that passes through an obstacle, and a permissible two-part path. }
+\label{fig:Paths}
+\end{figure*}
+
+Fig.~\ref{fig:ReachableSizeByRho} shows the size of the reachable set--specified by the ratio of the set sizes $\lvert R^{(i)} \rvert / \lvert L \rvert$--as a function of minimum radius of curvature $\rho_{\text{min}}$. With $\rho_{\text{min}} =$ 100~mm, paths starting at $v^{(1)}$ were able to reach approximately 8 percent of $L$, while paths starting at $v^{(2)}$ were able to reach approximately 41 percent of $L$. 
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width = 0.5\textwidth]{Images/Chapter3/ReachableSizeByRho/ReachableSizeByRho}%
+\caption[Reachable set size as a function of $\rho_{\text{min}}$]{Ratio of reachable set size to total liver size as a function of minimum radius of curvature $\rho_{\text{min}}$. Results for intercostal ($v^{(1)}$) and anterior approaches ($v^{(2)}$) are shown.}
+\label{fig:ReachableSizeByRho}
+\end{figure*}
+
+Fig.~\ref{fig:ReachableSizeByRho} shows a frontal slice near the center of the liver, with color indicating radius of curvature $\rho$ required to reach each voxel from $v^{(1)}$. The needle was not able to reach areas behind the hepatic veins and surrounding the insertion. Most of the slice was reachable using single-section paths, except for the area blocked by the vessels.
+
+Discussion
+Results shown in Fig.~\ref{fig:ReachableSizeByRho} reveal the gap between current needle steering methods and our clinical application. The tightest steerable needle curvatures $\rho_{\text{min}}$ reported in biological tissue are between 100-200 mm [2]. Even combining the intercostal and anterior subcostal approaches, such needles would only permit access to 50 percent of the liver at best. Since the distribution of tumor sites is approximately uniform throughout the liver, current steerable needles would be unable to access many targets. Although angling the introducer could change the results shown in Fig. 4, interference from the ribs and potential for tissue injury limit this degree of freedom after the initial insertion. 
+
+An important potential advantage of needle steering in RFA of liver tumors is the ability to reach targets in the dome of the liver (on the right-lateral superior surface), which can be very difficult in some patients using traditional RFA probes due to interference from the ribs.
+  
+\begin{figure*}[!t]
+\centering
+\includegraphics[width = \textwidth]{Images/Chapter3/FrontalSlice/FrontalSlice}%
+\caption[Reachable set size as a function of $\rho_{\text{min}}$]{Frontal slice of $L$. Colors indicate the radius of curvature $\rho$ required to reach each voxel. Black voxels were not reachable with any curvature in the examined range (10-200~mm). White voxels, including the vessels inside the liver, were outside $L$.}
+\label{fig:FrontalSlice}
+\end{figure*}  
+
+As seen in Fig.~\ref{fig:FrontalSlice}, a radius of curvature of approximately 50~mm is necessary to reach the right-lateral aspect of the liver dome. We believe $\rho_{\text{min}} = 50$~mm is thus a reasonable curvature requirement for future development, since it allows the needle to access the liver dome, and reach approximately 85 percent of the liver volume from the entry points we have described. Improvement of needle curvature to this level will require significant refinement of needle steering techniques.  
+
 \section{Analysis of Tip Geometry }
 \label{sec:TipGeometryAnalysis}
 Bent-tip steerable needles described to date have generally had tip length $l \approx$~4~mm, and tip angle $\alpha \approx$~30~degrees~\cite{Patil2014,Swaney2013,Rucker2013,Majewicz2012}. Since bent-tip needles steer as a result of the asymmetric lateral force at the tip, it is reasonable to expect that a greater asymmetry---i.e., larger tip length $l$ or tip angle $\alpha$ as shown in Fig.~\ref{fig:NSFactors}---would result in improved curvature. However, because of the complex mechanics of needle-tissue interaction, it was unclear how altering tip parameters over a larger range of values than previously considered~\cite{Majewicz2010} would affect curvature performance. The work described in this section is meant to improve our understanding of the relationship between bent-tip geometry and radius of curvature. We proceeded in two ways. First, we used a simplified FE model of a bent tip moving in tissue to gain insight into the general relationship between tip length, tip angle, and steerable needle curvature. Second, we performed experimental testing to measure the actual needle radius of curvature $\rho$ achieved by bent-tip needles with different geometries in liver tissue.
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{Images/Chapter3/AbaqusResults/AbaqusResults}%
-\caption{FE simulation results: (a) Impact of bent-tip length $l$ on simulated radius of curvature $\rho$. (b) Impact of bent-tip angle $\alpha$ on simulated radius of curvature $\rho$.}
+\includegraphics[width=0.75\columnwidth]{Images/Chapter3/AbaqusResults/AbaqusResults}%
+\caption[FE simulation results]{FE simulation results: (a) Impact of bent-tip length $l$ on simulated radius of curvature $\rho$. (b) Impact of bent-tip angle $\alpha$ on simulated radius of curvature $\rho$.}
 \label{fig:AbaqusResults}
 \end{figure}
 
@@ -38,8 +84,8 @@ Fig.~\ref{fig:Abaqus}(c) shows an example of the FE model at the final simulatio
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{Images/Chapter3/Bent-TipGeometry/Bent-TipGeometry}%
-\caption{Geometry of bent-tip steerable needles used for testing in \textit{ex vivo} tissue. In the tip-length test, four needles with tip angle of 45 degrees and tip length of (a) 4~mm, (b) 8~mm, (c) 12~mm, and (d) 16~mm were tested. In the tip-angle test, three needles with tip length of 12~mm and tip angle of (e) 30~degrees, (f) 45~degrees, and (g) 60~degrees were tested. A schematic view (h) shows the construction of the bent-tip steerable needles. A Nitinol (NiTi) tube with outer diameter (OD) of 0.8~mm and inner diameter (ID) of 0.5~mm forms the shaft of each needle. A stainless-steel (SS) insert is bonded inside the tube with epoxy to form the tip. The tip is then ground into a cone using an abrasive wheel, and the tip is bent to the appropriate length and angle.}
+\includegraphics[width=0.75\columnwidth]{Images/Chapter3/Bent-TipGeometry/Bent-TipGeometry}%
+\caption[Geometry of bent-tip steerable needles used for testing]{Geometry of bent-tip steerable needles used for testing in \textit{ex vivo} tissue. In the tip-length test, four needles with tip angle of 45 degrees and tip length of (a) 4~mm, (b) 8~mm, (c) 12~mm, and (d) 16~mm were tested. In the tip-angle test, three needles with tip length of 12~mm and tip angle of (e) 30~degrees, (f) 45~degrees, and (g) 60~degrees were tested. A schematic view (h) shows the construction of the bent-tip steerable needles. A Nitinol (NiTi) tube with outer diameter (OD) of 0.8~mm and inner diameter (ID) of 0.5~mm forms the shaft of each needle. A stainless-steel (SS) insert is bonded inside the tube with epoxy to form the tip. The tip is then ground into a cone using an abrasive wheel, and the tip is bent to the appropriate length and angle.}
 \label{fig:Bent-TipGeometry}
 \end{figure}
 
@@ -54,36 +100,36 @@ Four steerable needles with tip angles $\alpha$ of 45~degrees and tip lengths $l
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{Images/Chapter3/CurvatureVsLength/CurvatureVsLength}%
-\caption{Summary of experimental results showing impact of bent-tip length $l$ on needle radius of curvature $\rho$ in \textit{ex vivo} tissue. Four tip lengths (4 mm, 8 mm, 12 mm, and 16 mm) were tested. All measured values of $\rho$ are shown, along with average values $\rho_{\text{avg}}$ for each value of $l$.}
+\includegraphics[width=0.75\columnwidth]{Images/Chapter3/CurvatureVsLength/CurvatureVsLength}%
+\caption[Impact of bent-tip length $l$ on needle radius of curvature $\rho$]{Summary of experimental results showing impact of bent-tip length $l$ on needle radius of curvature $\rho$ in \textit{ex vivo} tissue. Four tip lengths (4 mm, 8 mm, 12 mm, and 16 mm) were tested. All measured values of $\rho$ are shown, along with average values $\rho_{\text{avg}}$ for each value of $l$.}
 \label{fig:CurvatureVsLength}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=\columnwidth]{Images/Chapter3/CurvatureVsAngle/CurvatureVsAngle}%
-\caption{Summary of experimental results showing impact of bent-tip angle $\alpha$ on needle radius of curvature $\rho$ in \textit{ex vivo} liver tissue. Three tip angles (30 degrees, 45 degrees, and 60 degrees) were tested. All measured values of $\rho$ are shown, along with average values $\rho_{\text{avg}}$ for each value of $\alpha$.}
+\includegraphics[width=0.75\columnwidth]{Images/Chapter3/CurvatureVsAngle/CurvatureVsAngle}%
+\caption[Impact of bent-tip angle $\alpha$ on needle radius of curvature $\rho$]{Summary of experimental results showing impact of bent-tip angle $\alpha$ on needle radius of curvature $\rho$ in \textit{ex vivo} liver tissue. Three tip angles (30 degrees, 45 degrees, and 60 degrees) were tested. All measured values of $\rho$ are shown, along with average values $\rho_{\text{avg}}$ for each value of $\alpha$.}
 \label{fig:CurvatureVsAngle}
 \end{figure} 
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.9\textwidth]{Images/Chapter3/CurvatureVsLength/CurvatureVsLengthData}%
-\caption{Experimental results showing impact of bent-tip length $l$ on needle radius of curvature $\rho$ in \textit{ex vivo} tissue. Four tip lengths (4 mm, 8 mm, 12 mm, and 16 mm) were tested. All segmentation results and average values $\rho_{\text{avg}}$ for each value of $l$ are shown. The needle paths have been moved to a common origin for comparison.}
+\caption[Experimental results showing impact of bent-tip length $l$]{Experimental results showing impact of bent-tip length $l$ on needle radius of curvature $\rho$ in \textit{ex vivo} tissue. Four tip lengths (4 mm, 8 mm, 12 mm, and 16 mm) were tested. All segmentation results and average values $\rho_{\text{avg}}$ for each value of $l$ are shown. The needle paths have been moved to a common origin for comparison.}
 \label{fig:CurvatureVsLengthData}
 \end{figure*}
 
 \begin{figure*}[!ht]
 \centering
 \includegraphics[width=0.9\textwidth]{Images/Chapter3/CurvatureVsAngle/CurvatureVsAngleData}%
-\caption{Experimental results showing impact of bent-tip angle $\alpha$ on needle radius of curvature $\rho$ in \textit{ex vivo} liver tissue. Three tip angles (30 degrees, 45 degrees, and 60 degrees) were tested. All segmentation results and average values $\rho_{\text{avg}}$ for each value of $\alpha$ are shown. The needle paths have been moved to a common origin for comparison.}
+\caption[Experimental results showing impact of bent-tip angle $\alpha$]{Experimental results showing impact of bent-tip angle $\alpha$ on needle radius of curvature $\rho$ in \textit{ex vivo} liver tissue. Three tip angles (30 degrees, 45 degrees, and 60 degrees) were tested. All segmentation results and average values $\rho_{\text{avg}}$ for each value of $\alpha$ are shown. The needle paths have been moved to a common origin for comparison.}
 \label{fig:CurvatureVsAngleData}
 \end{figure*}
 
 \begin{figure*}[!ht]
 \centering
 \includegraphics[width=\textwidth]{Images/Chapter3/ArticulatedTipDetail/ArticulatedTipDetail}
-\caption{The articulated-tip needle mechanism: (a) Schematic of the articulated tip in the straight configuration. The tip consists of a two-part 3D-printed hinge mechanism approximately 2.0 mm in diameter, secured to a 0.8-mm Nitinol tube, and a 1.0-mm ground stainless-steel tip. (b) Section view of the articulated tip in the straight configuration. A single continuous, pretensioned Nitinol pull wire is used to articulate the needle tip. The pull wire runs through the tubular Nitinol (NiTi) needle shaft, through channels in the proximal hinge section, and is secured to the distal hinge section with adhesive. A ground conical stainless-steel (SS) tip is secured to the distal hinge section with adhesive. (c) Schematic of the articulated-tip in the bent configuration. Nominal tip parameters of $l =$ 9~mm and $\alpha =$ 45~degrees were selected. (d) Micrograph of the assembled tip in the straight configuration. (e) Micrograph of the assembled tip in the bent configuration.}
+\caption[Articulated-tip needle mechanism]{The articulated-tip needle mechanism: (a) Schematic of the articulated tip in the straight configuration. The tip consists of a two-part 3D-printed hinge mechanism approximately 2.0 mm in diameter, secured to a 0.8-mm Nitinol tube, and a 1.0-mm ground stainless-steel tip. (b) Section view of the articulated tip in the straight configuration. A single continuous, pretensioned Nitinol pull wire is used to articulate the needle tip. The pull wire runs through the tubular Nitinol (NiTi) needle shaft, through channels in the proximal hinge section, and is secured to the distal hinge section with adhesive. A ground conical stainless-steel (SS) tip is secured to the distal hinge section with adhesive. (c) Schematic of the articulated-tip in the bent configuration. Nominal tip parameters of $l =$ 9~mm and $\alpha =$ 45~degrees were selected. (d) Micrograph of the assembled tip in the straight configuration. (e) Micrograph of the assembled tip in the bent configuration.}
 \label{fig:ArticulatedTipDetail}
 \end{figure*} 
 
@@ -108,10 +154,10 @@ The \textit{ex vivo} test results and the FE simulation results generally agreed
 \label{sec:Articulated-TipNeedle}
 Two important practical issues preclude the clinical application of steerable needles having rigid bent tips with $l =$~12~mm and $\alpha =$~45~degrees in percutaneous RFA of liver tumors. The first issue relates to the introducer sheath, which is a separate rigid needle required to puncture layers of skin and fat to access the liver itself. A bent-tip needle with $l >$~4~mm and $\alpha >$~30~degrees cannot fit through a realistic introducer sheath, since a typical 15-gauge introducer has an inner diameter of approximately 1.5~mm. The second issue relates to rotation of the needle during insertion, which is necessary for control of the steerable needle. Rotation of a bent-tip needle results in deformation of the tissue immediately surrounding the tip. As $l$ and $\alpha$ increase, there is more tissue deformation, resulting in decreased targeting accuracy and potentially greater tissue damage. There is also more resistance to rotation with longer tips, potentially increasing torsional deflection, which has previously been shown to be problematic for needle control~\cite{Reed2009}.
 
-\begin{figure*}[!ht]
+\begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{Images/Chapter3/NS2Robot/NS2Robot}
-\caption{Schematic top view of the articulated-tip needle steering robot. DC motors drive a leadscrew for insertion of the needle, a rotary stage for rotation of the needle, and a cable pulley for articulation of the tip. A telescoping sheath prevents the flexible steerable needle from buckling outside of tissue. A detail view shows the removable needle hub attached to the rotatory stage. The needle steering robot is attached to a passive positioning arm using a mounting plate. A standard introducer sheath and connecting luer-lock fixture are omitted.}
+\caption[Top view of the articulated-tip robot]{Schematic top view of the articulated-tip needle steering robot. DC motors drive a leadscrew for insertion of the needle, a rotary stage for rotation of the needle, and a cable pulley for articulation of the tip. A telescoping sheath prevents the flexible steerable needle from buckling outside of tissue. A detail view shows the removable needle hub attached to the rotatory stage. The needle steering robot is attached to a passive positioning arm using a mounting plate. A standard introducer sheath and connecting luer-lock fixture are omitted.}
 \label{fig:NS2Robot}
 \end{figure*}
 
@@ -138,10 +184,10 @@ Fig.~\ref{fig:NS2Robot} shows a schematic overview of the new robot designed to 
 \subsubsection{Method}
 \textit{Ex vivo} porcine liver tissue obtained fresh from a local butcher was used to simulate human liver tissue in all testing of the articulated-tip needle. Fig.~\ref{fig:ExperimentalSetup} shows the experimental setup used in validation testing. We evaluated our articulated-tip steerable needle design in three ways. 
 
-\begin{figure}[!ht]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{Images/Chapter3/ExperimentalSetup/ExperimentalSetup}
-\caption{Experimental setup for validation testing of the articulated-tip steerable needle. The needle steering robot is mounted on a passive positioning arm. \textit{Ex vivo} porcine liver was used to simulate human liver tissue. The articulated-tip needle entered the liver tissue through a 13-gauge introducer sheath. A tracked 2D ultrasound transducer was used to image the needle for validation. }
+\includegraphics[width=0.75\columnwidth]{Images/Chapter3/ExperimentalSetup/ExperimentalSetup}
+\caption[Setup for validation testing of the articulated-tip needle]{Experimental setup for validation testing of the articulated-tip steerable needle. The needle steering robot is mounted on a passive positioning arm. \textit{Ex vivo} porcine liver was used to simulate human liver tissue. The articulated-tip needle entered the liver tissue through a 13-gauge introducer sheath. A tracked 2D ultrasound transducer was used to image the needle for validation. }
 \label{fig:ExperimentalSetup}
 \end{figure} 
 
@@ -153,22 +199,22 @@ Finally, we compared the articulated-tip needle design with bent-tip needles in 
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width = \columnwidth]{Images/Chapter3/ArticulatedTipUS/ArticulatedTipUS}%
-\caption{Ultrasound images of the articulated tip demonstrate the ability of the needle to achieve the straight (top) and bent (bottom) configurations in \textit{ex vivo} liver tissue. In the bent configuration, tip angle $\alpha$ was found to be 41.5 degrees using manual segmentation.}
+\includegraphics[width = 0.75\columnwidth]{Images/Chapter3/ArticulatedTipUS/ArticulatedTipUS}%
+\caption[Ultrasound images of the articulated tip]{Ultrasound images of the articulated tip demonstrate the ability of the needle to achieve the straight (top) and bent (bottom) configurations in \textit{ex vivo} liver tissue. In the bent configuration, tip angle $\alpha$ was found to be 41.5 degrees using manual segmentation.}
 \label{fig:ArticulatedTipUS}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{Images/Chapter3/ArticulatedTipMaxCurvature/ArticulatedTipMaxCurvature}
-\caption{Minimum-radius-of-curvature results with the articulated-tip steerable needle. The needle was inserted with the articulated-tip in the bent configuration. Across four trials in fresh sections of \textit{ex vivo} liver tissue, the average radius of curvature $\rho_{\text{avg}}$ was 82.7~mm. The needle paths have been moved to a common origin for comparison.}
+\includegraphics[width=0.75\columnwidth]{Images/Chapter3/ArticulatedTipMaxCurvature/ArticulatedTipMaxCurvature}
+\caption[Minimum-$\rho$ results with the articulated-tip needle]{Minimum-radius-of-curvature results with the articulated-tip steerable needle. The needle was inserted with the articulated-tip in the bent configuration. Across four trials in fresh sections of \textit{ex vivo} liver tissue, the average radius of curvature $\rho_{\text{avg}}$ was 82.7~mm. The needle paths have been moved to a common origin for comparison.}
 \label{fig:ArticulatedMaxCurvature}
 \end{figure}  
 
 \begin{figure*}[!ht]
 \centering
 \includegraphics[width=\textwidth]{Images/Chapter3/InsertAndTurn/InsertAndTurn}
-\caption{Representative examples of direction change maneuver using a bent-tip needle with $l =$~4~mm and $\alpha =$~45~degrees, and an articulated-tip needle with $l =$~9~mm and $\alpha \approx$~45~degrees. Each needle was inserted along a straight path for approximately 40~mm, then was steered along the minimum-radius-of-curvature path for an additional 40~mm. In the maneuvers shown in the figure, deviation $\delta$ was 9.8~mm using the bent-tip needle, and 27.7~mm using the articulated-tip needle.}
+\caption[Maneuvers using bent-tip and articulated-tip needles]{Representative examples of direction change maneuver using a bent-tip needle with $l =$~4~mm and $\alpha =$~45~degrees, and an articulated-tip needle with $l =$~9~mm and $\alpha \approx$~45~degrees. Each needle was inserted along a straight path for approximately 40~mm, then was steered along the minimum-radius-of-curvature path for an additional 40~mm. In the maneuvers shown in the figure, deviation $\delta$ was 9.8~mm using the bent-tip needle, and 27.7~mm using the articulated-tip needle.}
 \label{fig:InsertAndTurn}
 \end{figure*}
 
