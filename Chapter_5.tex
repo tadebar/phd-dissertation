@@ -23,7 +23,14 @@ Chapter 3 presented a new articulated-tip steerable needle that showed promising
 \end{figure}  
 
 \subsection{Control Modes}
-Our implementation of human-in-the-loop control allows the user to select between joint-space control of the needle steering robot and task-space control of the needle tip position. In joint-space control, the user uses a 3D mouse (SpaceNavigator; 3Dconnexion, Boston, MA) to directly control the insertion and rotation of the needle steering robot's two DOF. Using a rate-control scheme, uniaxial displacement of the 3D mouse is mapped to insertion velocity, while uniaxial rotation of the 3D mouse is mapped to rotation speed. The remaining inputs of the 3D mouse are not used.
+Our implementation of human-in-the-loop control allows the user to select between joint-space control of the needle steering robot and task-space control of the needle tip position. In joint-space control, the user uses a 3D mouse (SpaceNavigator; 3Dconnexion, Boston, MA) to directly control the insertion and rotation of the needle steering robot's two DOF. Using a rate-control scheme, uniaxial displacement of the 3D mouse is mapped to insertion velocity, while uniaxial rotation of the 3D mouse is mapped to rotation speed. The remaining inputs of the 3D mouse are not used. Fig.~\ref{fig:InputDevices}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width = 0.4\columnwidth]{./Images/Chapter5/InputDevices/DRAFTInputDevices.jpg}%
+\caption[Input devices for robot control]{Input devices for human-in-the-loop control of robotic needle steer: (a) A 3D mouse is used for rate control of the steerable needle insertion and rotation. (b) A tablet is used to select targets and measure the needle tip position in the stream of 2D ultrasound images.}
+\label{fig:InputDevices}
+\end{figure}  
 
 In task-space control, the user selects target positions directly in the live 2D ultrasound image using a tablet interface (Cintiq 13; Wacom Co., Vancouver, WA. The robot then steers the needle towards the target semi-autonomously, with feedback based on the output from the UKF estimation scheme described in Chapter 4. The estimator is updated without measurement feedback (i.e., based on the process model) at the ultrasound machine's native framerate. After every 10~mm of insertion, the system requires a tip position measurement, which the user provides by scanning over the needle tip and localizing it using the tablet interface. The estimation scheme is implemented exactly as described in Chapter 4 with two exceptions. First, the process and measurement noise levels were again experimentally characterized for the flexure needle and manual measurements, and the filter gains were adjusted accordingly. Second, the manual measurements only provided feedback on tip position, so tip orientation feedback was taken directly from the output of the estimator, with extremely low gain (high variance). This approach avoided practical computational issues related to matrix inversion and manipulation.
 
@@ -61,7 +68,7 @@ A custom graphical user interface (GUI) was developed using Qt for human-in-the-
 
 
 
-\section{Validation Methods}
+\section{Experimental Validation}
 \label{sec:HumanInTheLoopValidation}
 
 \subsection{Quantification of Process and Measurement Noise}
@@ -76,7 +83,7 @@ Measurement noise was quantified by comparing manual tip localization results fr
 \subsection{Simulated Clinical Steering Experiments}
 
 
-\section{Validation Results}
+\section{Results}
 \label{sec:HumanInTheLoopResults}
 
 \subsection{Quantification of Process and Measurement Noise}

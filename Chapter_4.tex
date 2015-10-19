@@ -6,10 +6,10 @@ Although ultrasound has many advantages as an imaging modality, it produces nois
 
 In this chapter, to attain clinically relevant targeting precision using sparse, noisy measurements, we describe a model-based recursive estimation scheme known as an unscented Kalman filter (UKF). This filter relies on experimental quantification of process and measurement noise for ultrasound-guided needle steering in biological tissue, which was performed using an electromagnetic tracking system as a reference.
  
-This chapter is divided into two main sections. Section~\ref{sec:UKF} describes our UKF estimation scheme. Section~\ref{sec:AutonomousControl} describes validation of the scheme through closed-loop steering experiments in simulation and bench-top tissue models. The work described in this chapter was previously presented at the IEEE/RSJ International Conference on Intelligent Robotics and Systems~\cite{Adebar2014a}.
+This chapter is divided into two main sections. Section~\ref{sec:UKF} describes our UKF estimation scheme. Section~\ref{sec:AutonomousControl} describes validation of the scheme through closed-loop steering experiments in simulation and bench-top tissue models. The work described in this chapter was published in the proceedings of the IEEE/RSJ International Conference on Intelligent Robotics and Systems~\cite{Adebar2014a}.
 
 %======================================================================
-\section[UKF Estimation Scheme]{Unscented Kalman Filter Estimation Scheme}
+\section{Estimation Scheme}
 %======================================================================
 \label{sec:UKF}
 \subsection{Needle Steering Model}
@@ -114,7 +114,7 @@ P = \frac{1}{k}\sum\limits_{i=1}^{k}dd^T.
 Since the effect of process noise on the state transition is nonadditive, we include the noise covariance matrices $Q$ and $R$ in the generation of the Sigma points. In other words, given a state estimate $\tilde{x} \sim N\left(\mu,P\right)$, we draw Sigma points from the distribution $\sim N\left(\mu,P+Q\right)$, and pass them through the state transition function.
  
 %======================================================================
-\section[Experimental Validation of UKF Estimation]{Experimental Validation of UKF Estimation}
+\section{Experimental Validation}
 %======================================================================
 \label{sec:AutonomousControl}
 Application of the UKF requires an understanding of the relative amounts of uncertainty (\textit{i.e.}, noise) in the evolution of the state (process noise) and the measurement of the state (measurement noise). To quantify the process and measurement noise involved in 3D-ultrasound-guided needle steering, we first performed experimental measurements using samples of \textit{ex vivo} porcine liver tissue. We then validated our estimation scheme in simulated needle steering trials, and in bench-top needle steering experiments using the needle steering robot described in Chapter~2.
@@ -197,7 +197,7 @@ To make our simulations realistic, we chose to formulate the Kalman gains in the
 {R} = \text{diag}(\begin{bmatrix} 1 & 1 & 1 & 3282 & 3282 & 3282 \end{bmatrix}^{\text{T}}).
 \end{align*}
 
-\subsection{3D-Ultrasound-Guided Needle Steering Simulations}
+\subsubsection{3D-Ultrasound-Guided Needle Steering Simulations}
 Over 10,000 simulation trials, the average error (mean~$\pm$~standard deviation) in final tip placement was 2.26~$\pm$~1.30~mm using the UKF-filtered segmentation results for feedback, and 11.85~$\pm$~7.36~mm using the unfiltered segmentation results. Based on a bootstrapped statistical test, the UKF resulted in a statistically significant increase in placement accuracy ($p~<~0.01$).
 
 \begin{figure}[!h]
@@ -218,7 +218,7 @@ Fig.~\ref{fig:Noise} shows experimental histograms of process and measurement no
 
 Fig.~\ref{fig:SimulationResults} shows simulation results from using the UKF-filtered segmentation data in closed-loop steering towards a target. The figure shows actual, measured and estimated values for two state elements (again $p_0$ and $r_0$), along with resulting control inputs ($\delta\theta$ and $\rho$) and UKF gains. In this simulation, the needle tip was steered from a point with $p_0 = 0$ towards a point at $p_0 = 15$. As seen in the figure, the UKF approach accurately estimated the true position and orientation despite large amounts of measurement noise, particularly in orientation. As mentioned above, the segmentation method we apply is based on measuring the centroid of irregular Doppler patches around the needle, and gives a relatively poor indication of needle tip orientation. The UKF estimate of tip orientation was thus based almost entirely on our kinematic model of needle steering, whereas the UKF estimate of tip position was based on both the kinematic model and the segmentation results. This is shown by the UKF gains $K_{00}$ and $K_{33}$, which represent how heavily measurements $z_0$ and $z_3$ are weighted versus the corresponding process model outputs at each iteration. As shown by the control inputs, the robot made a large initial rotation to steer the needle towards the target, then made small corrections as a result of the steering variability (process noise). Once the needle approached the target, larger rotations and tighter path radii were necessary to correct for variations. At the end of the trial the needle tip was 0.83 mm from the target.    
 
-\subsection{3D-Ultrasound-Guided Needle Steering Experiments}
+\subsubsection{3D-Ultrasound-Guided Needle Steering Experiments}
 Table~\ref{table:Targeting Results} lists final tip placement error for each closed-loop steering test. Over six tests using the UKF, the average error was 2.69 mm. This is within one standard deviation of the mean simulation result, and approaches an acceptable error for clinical applications. Over six tests without the UKF, the average error was 11.39 mm, which is also within one standard deviation of the mean simulation result. The robot executed between nine and twelve incremental insertions in each test. 
 
 \begin{table}[!h]
