@@ -6,14 +6,14 @@ The experimental results presented in Chapter 4 showed promising accuracy in aut
 
 To allow closed-loop ultrasound-guided needle steering in a realistic clinical situation, we implemented our UKF estimation scheme using a different imaging approach. Specifically, we used freehand-3D ultrasound imaging, and manual localization of the steerable needle tip. 
 
-This chapter is divided into three sections. Section~\ref{sec:HumanInTheLoopImplementation} describes the algorithmic, hardware, and software implementation of our human-in-the-loop approach. Section~\ref{sec:HumanInTheLoopValidation} describes experimental validation of our human-in-the-loop control approach, in bench-top and simulated clinical testing. Section~\ref{sec:HumanInTheLoopResults} presents the results.
+This chapter is divided into three sections. Section~\ref{sec:HumanInTheLoopImplementation} describes the algorithmic, hardware, and software implementation of our clinical human-in-the-loop approach. Section~\ref{sec:HumanInTheLoopValidation} describes experimental validation of our human-in-the-loop control approach, in bench-top and simulated clinical testing. Section~\ref{sec:HumanInTheLoopResults} presents the results.
 
 \section{Implementation}
 \label{sec:HumanInTheLoopImplementation}
 
 \subsection{Robot and Steerable Needles}
 \label{sec:NS2RobotAndNeedle}
-Chapter 3 presented a new articulated-tip steerable needle that showed promising curvature results in biological tissue. Unfortunately, as discussed in that chapter, the plastic construction of the miniature hinges failed too frequently to be used in a simulated clinical setting. Chapter 6 discusses possible future improvements to the hinge design. In this chapter, we applied the exaggerated tip geometry suggested by the results of Chapter 3, but used a flexure tip, consisting of a rectangular Nitinol wire plastically deformed to the desired tip angle. This tip is able to pass through an introducer sheath, because of the large elastic range of Nitinol, and while returning to its bent shape inside tissue. This design does require duty cycle control to follow straight paths, and may increase tissue damage, unlike the articulated-tip needle. A similar flexure tip was previously proposed by Swaney et al.~\cite{Swaney2013}. Fig.~\ref{fig:NS2AndNeedle} shows the flexure tip steerable needle and the robot used to drive it in this chapter.
+Chapter 3 presented a new articulated-tip steerable needle that showed promising curvature results in biological tissue. Unfortunately, as discussed in that chapter, the plastic construction of the miniature hinges failed too frequently to be used in a clinical setting. Chapter 6 discusses possible future improvements to the hinge design. In this chapter, we applied the exaggerated tip geometry suggested by the results of Chapter 3, but used a flexure tip, consisting of a rectangular Nitinol wire plastically deformed to the desired tip angle. This tip is able to pass through an introducer sheath, because of the large elastic range of Nitinol, and while returning to its bent shape inside tissue. This design does require duty cycle control to follow straight paths, and may increase tissue damage, unlike the articulated-tip needle. A similar flexure tip was previously proposed by Swaney et al.~\cite{Swaney2013}. Fig.~\ref{fig:NS2AndNeedle} shows the flexure tip steerable needle and the robot used to drive it in this chapter.
 
 \begin{figure}[!ht]
 \centering
@@ -77,29 +77,57 @@ As in Chapter 4, we first quantified process noise and measurement noise using o
 Measurement noise was quantified by comparing manual tip localization results from repeated freehand-3D ultrasound scans of steerable needles in porcine liver tissue. Five repeated measurements were performed at each tip position, with 200 total measurements over five needle insertions. For each measurement, the user scanned over the needle with the ultrasound transducer, and manually selected the location of the steerable needle tip using the tablet and stylus. Data analysis was again performed offline in Matlab.
 
 \subsection{Accuracy of Estimation Scheme}
+We attempted to quantify the accuracy of our UKF estimation scheme in this application by comparison with a gold-standard measurement. This is difficult because there is no true gold-standard measurement of steerable needle tip pose (if there was, we would likely attempt to use it for closed-loop control in place of ultrasound imaging). Although an electromagnetic tracker inside the needle tip was used for quantifying process noise, there are several practical issues that limit its use as a gold-standard. First, the tracker is sensitive to electromagnetic noise from the vibration motor during actual steering. Second, the vendor-supplied calibration of the tracked ultrasound transducer is not perfectly accurate. Finally, it is impossible to place the electromagnetic transducer right at the needle tip (because of the rigid bent-tip section), so a tip calibration must be applied to the raw tracking data. This tip calibration can become inaccurate as the needle bends, and makes the measurement very sensitive to orientation noise. 
 
-\subsection{Bench-Top Steering Experiments}
+In any case, since the electromagnetic tracking system provides the best reference data, we compared our estimator with it over a series of steering trials. Over four insertions in \textit{ex vivo} porcine liver, the needle was steered while alternating between joint-space and task-space control. On each control update (synchronized to the ultrasound framerate), the calibrated electromagnetic tracker reading and UKF estimate was saved, and comparison was performed offline in Matlab.
 
-\subsection{Simulated Clinical Steering Experiments}
+\subsection{Clinical Needle Steering Experiments}
+Fig.~\ref{fig:CadaverSetup} shows the experimental setup for the clinical needle steering experiments. A fresh pig carcass with an undisturbed liver was obtained for testing. To prevent coagulation and preserve the mechanical properties of the liver as much as possible, heparin was administered at a dosage of 300 IU/kg prior to euthanasia. The carcass was placed in supine position on a standard interventional radiology suite table, and was restrained to prevent tissue motion. 
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width = \columnwidth]{./Images/Chapter5/CadaverSetup/CadaverSetup.jpg}%
+\caption[Clinical Needle Steering Experimental Setup]{Clinical Steering Experimental Setup. The pig carcass is mounted in supine position on the table. The needle steering robot is secured to the table rails, and connected to an introducer sheath to allow access to the liver through skin and subcutaneous fat. A second introducer sheath allows placement of target coils.}
+\label{fig:CadaverSetup}
+\end{figure}  
+
+After exploratory ultrasound imaging, multi-loop-coil fiducials were implanted in the liver to serve as targets. These fiducials are designed to be visible in CT imaging, but are also visible in ultrasound because of the gas trapped in the coils.  
+
+A second 15-gauge introducer needle was used to place each fiducial. 
+
+The needle was left in place during steering to aid in target identification.
+
+After implanting each target, the needle steering robot was used to place the tip of the steerable needle at the target fiducial using human-in-the-loop control. 
+
+The steerable needle accessed the liver in an anterior subcostal approach, through a 15-gauge, XX-cm introducer needle. 
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width = \columnwidth]{./Images/Chapter5/CadaverTargetsUS/CadaverTargetsUS.pdf}%
+\caption[Entry vector, targets and obstacles in cadaver liver]{Entry vector, targets and obstacles in cadaver liver. Three fiducials (numbered) were implanted around the gallbladder to provide targets for closed-loop needle steering. The targets were not all located within the imaging plane, and locations are approximate. The introducer needle and approximate initial path of the steerable needle are indicated, as are the gallbladder and liver boundary. }
+\label{fig:CadaverSetup}
+\end{figure} 
+
+
 
 
 \section{Results}
 \label{sec:HumanInTheLoopResults}
 
 \subsection{Quantification of Process and Measurement Noise}
-Across 517 samples of process noise, the mean position error (in millimeters) and mean orientation error (in degrees) were \[{\overline{p}_{w}} = \begin{bmatrix} 0.03 &-1.68 &0.01 \end{bmatrix}^{\text{T}}, {\overline{r}_{w}} = \begin{bmatrix} 0.18 &-0.03 &0.08 \end{bmatrix}^{\text{T}}.\] To find the best-fit zero-mean Gaussian distribution to the process noise, we again reflected the measured noise vectors, resulting in a sample covariance of
+Across 517 samples of process noise, the mean position error (in millimeters) and mean orientation error (in degrees) were \[{\overline{p}_{w}} = \begin{bmatrix} 0.03 &-0.17 &0.01 \end{bmatrix}^{\text{T}}, {\overline{r}_{w}} = \begin{bmatrix} 0.18 &-0.03 &0.08 \end{bmatrix}^{\text{T}}.\] To find the best-fit zero-mean Gaussian distribution to the process noise, we again reflected the measured noise vectors, resulting in a sample covariance of
 \begin{align*}
 {\hat{Q}} = \begin{bmatrix} 
-\phantom{-}0.16 & \phantom{-}0.02 	&-0.04 & -0.13 & \phantom{-}1.47 & \phantom{-}3.41\\
-\phantom{-}0.02 & \phantom{-}0.19 & -0.02 & -4.42 & \phantom{-}1.72 & -0.39 \\ 
--0.04 & -0.02 & \phantom{-}0.46 & -5.63 & \phantom{-}0.74 & -1.60 \\
--0.13 & -4.42 & -5.63 & \phantom{-}894.5 & \phantom{-}13.84 & \phantom{-}119.9 \\
-\phantom{-}1.47 & \phantom{-}1.72 & \phantom{-}0.74 & \phantom{-}13.84 & \phantom{-}181.9 & \phantom{-}84.88 \\
-\phantom{-}3.41 & -0.39 & -1.60 & \phantom{-}119.9 & \phantom{-}84.88 & \phantom{-}791.4\\ 
+\phantom{-}0.16 & \phantom{-}0.02 	&-0.04 & -0.01 & \phantom{-}0.03 & \phantom{-}0.06\\
+\phantom{-}0.02 & \phantom{-}0.16 & -0.02 & -0.05 & \phantom{-}0.03 & \phantom{-}0.01 \\ 
+-0.04 & -0.02 & \phantom{-}0.46 & -0.10 & \phantom{-}0.01 & -0.03 \\
+-0.01 & -0.05 & -0.10 & \phantom{-}0.24 & \phantom{-}0.01 & \phantom{-}0.02 \\
+\phantom{-}0.03 & \phantom{-}0.03 & \phantom{-}0.01 & \phantom{-}0.01 & \phantom{-}0.05 & \phantom{-}0.03 \\
+\phantom{-}0.06 & -0.01 & -0.03 & \phantom{-}0.04 & \phantom{-}0.03 & \phantom{-}0.24\\ 
 \end{bmatrix}.
 \end{align*}
 
-In the measurement noise experiment, we again assumed the mean of repeated localization at each tip pose was the true needle pose. NOT CORRECT YET
+In the measurement noise experiment, we again assumed the mean of repeated localization at each tip pose was the true needle pose.
 \begin{align*}
 {\hat{R}} = \begin{bmatrix} 
 \phantom{-}2.29 & \phantom{-}1.58 & \phantom{-}2.51 \\ 
@@ -107,3 +135,16 @@ In the measurement noise experiment, we again assumed the mean of repeated local
 \phantom{-}2.51 & \phantom{-}2.19 & \phantom{-}11.4 \\ 
 \end{bmatrix}.
 \end{align*}
+
+\subsection{Accuracy of Estimation Scheme}
+Over 5199 data points, mean estimator error was 4.6~mm.
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width = \columnwidth]{./Images/Chapter5/UKFAccuracy/UKFAccuracy.pdf}%
+\caption[UKF accuracy results]{UKF estimation scheme accuracy results. Comparison of calibrated and filtered electromagnetic tracker position (GPS) with estimator position (UKF). Measurements are also indicated. Robot joint variables ($\theta$, $l$) and radius of curvature $\rho$ inputs to the model are also shown. For UKF updates, $\rho$ is set to 1000~mm while the needle is inside the introducer sheath. }
+\label{fig:GUI}
+\end{figure}  
+
+\subsection{Simulated Clinical Steering Experiments}
