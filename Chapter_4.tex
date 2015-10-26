@@ -119,8 +119,7 @@ Since the effect of process noise on the state transition is nonadditive, we inc
 \label{sec:AutonomousControl}
 Application of the UKF requires an understanding of the relative amounts of uncertainty (\textit{i.e.}, noise) in the evolution of the state (process noise) and the measurement of the state (measurement noise). To quantify the process and measurement noise involved in 3D-ultrasound-guided needle steering, we first performed experimental measurements using samples of \textit{ex vivo} porcine liver tissue. We then validated our estimation scheme in simulated needle steering trials, and in bench-top needle steering experiments using the needle steering robot described in Chapter~2.
 
-\subsection{Experimental Methods}
-\subsubsection{Quantification of Process and Measurement Noise}
+\subsection{Quantification of Process and Measurement Noise}
 Process noise was quantified by using a magnetic tracking system to precisely measure the motion of a steerable needle tip during incremental insertion along constant curvature paths. A hollow steerable needle 0.80 mm in diameter was connected to the needle steering robot described in Chapter 2, and a 6DOF sensor attached to a magnetic tracking system (driveBAY; Ascension Technology Corp., Milton, VT) was inserted into the needle tip. The pose of the needle tip after each incremental step was compared with what was expected based on the previous pose and the process model. Denoting the state vector measured by the magnetic tracking system as $\hat{{x}}$, we determined an error vector ${w}$ at each step such that
 \begin{align}
 {\hat{x}_{k+1}} = f({\hat{x}_{k}}, {u_{\text{est}}}, {w}).
@@ -131,7 +130,7 @@ The tip position measurements could be used directly, however the tip orientatio
 
 Measurement noise was quantified by comparing automatic segmentation results from repeated 3D ultrasound scans of steerable needles in biological tissue. Between five and eleven repeated scans were performed for each of six needle tip poses. The needles were automatically segmented from each scan using the previously Doppler method described in Chapter 2. Data analysis was again performed offline in Matlab.
 
-\subsubsection{Ultrasound-Guided Needle Steering Simulations}
+\subsection{Ultrasound-Guided Needle Steering Simulations}
 We first evaluated our UKF algorithm in a series of simulated closed-loop needle steering trials. These simulations allowed us to compare our UKF results with the true needle tip state, which was not possible in the experiments described in the next section. In each trial, a target tip position and initial tip pose were identified in the 3D ultrasound coordinate system, and the needle tip was steered towards the target along a 3D path. Four initial scans were simulated to allow the UKF estimate to converge. Afterwards, the needle was steered in constant 3-mm incremental insertions using the UKF-filtered segmentation results to correct the needle rotation and path radius settings at each step. To provide a comparison baseline, each trial was also repeated using the unfiltered segmentation results as control feedback. 
 
 The target point ${t}$ was varied according to a uniform distribution:
@@ -152,11 +151,11 @@ Initial needle tip orientation was varied according to a normal distribution:
 \end{align}
 Simulations were implemented in Matlab.
 
-\subsubsection{Ultrasound-Guided Needle Steering Experiments}
+\subsection{Ultrasound-Guided Needle Steering Experiments}
 In addition to simulation tests, we performed a series of closed-loop needle steering experiments. The robot steered a 0.58 mm needle with a bevel tip in \textit{ex vivo} porcine liver tissue under 3D ultrasound guidance. The UKF algorithm was implemented in C++ and combined with algorithms for Doppler image segmentation. A SonixMDP ultrasound console (Ultrasonix Medical Corp., Richmond, Canada) with a convex mechanical 3D transducer (4DC7-3/40) was used for imaging. Similar to the simulated trials, a target was defined in the 3D ultrasound coordinate system and the needle was steered in constant 5-mm incremental insertions using sensor feedback to correct the needle rotation and path radius settings at each step. For comparison, six steering tests each were performed with and without the UKF.
 
-\subsection{Results}
-\subsubsection{Quantification of Process and Measurement Noise}
+\section{Results}
+\subsection{Quantification of Process and Measurement Noise}
 Across 66 samples of process noise, the mean position error (in millimeters) and mean orientation error (in degrees) were \[{\overline{p}_{w}} = \begin{bmatrix} 0.38 &-0.09 &0.17 \end{bmatrix}^{\text{T}}, {\overline{r}_{w}} = \begin{bmatrix} 0.43 &0.02 &0.50 \end{bmatrix}^{\text{T}}.\] To find the best-fit zero-mean Gaussian distribution to the process noise, we reflected the measured noise vectors, resulting in a sample covariance of
 \begin{align*}
 {\hat{Q}} = \begin{bmatrix} 
@@ -197,7 +196,7 @@ To make our simulations realistic, we chose to formulate the Kalman gains in the
 {R} = \text{diag}(\begin{bmatrix} 1 & 1 & 1 & 3282 & 3282 & 3282 \end{bmatrix}^{\text{T}}).
 \end{align*}
 
-\subsubsection{3D-Ultrasound-Guided Needle Steering Simulations}
+\subsection{3D-Ultrasound-Guided Needle Steering Simulations}
 Over 10,000 simulation trials, the average error (mean~$\pm$~standard deviation) in final tip placement was 2.26~$\pm$~1.30~mm using the UKF-filtered segmentation results for feedback, and 11.85~$\pm$~7.36~mm using the unfiltered segmentation results. Based on a bootstrapped statistical test, the UKF resulted in a statistically significant increase in placement accuracy ($p~<~0.01$).
 
 \begin{figure}[!h]
@@ -218,7 +217,7 @@ Fig.~\ref{fig:Noise} shows experimental histograms of process and measurement no
 
 Fig.~\ref{fig:SimulationResults} shows simulation results from using the UKF-filtered segmentation data in closed-loop steering towards a target. The figure shows actual, measured and estimated values for two state elements (again $p_0$ and $r_0$), along with resulting control inputs ($\delta\theta$ and $\rho$) and UKF gains. In this simulation, the needle tip was steered from a point with $p_0 = 0$ towards a point at $p_0 = 15$. As seen in the figure, the UKF approach accurately estimated the true position and orientation despite large amounts of measurement noise, particularly in orientation. As mentioned above, the segmentation method we apply is based on measuring the centroid of irregular Doppler patches around the needle, and gives a relatively poor indication of needle tip orientation. The UKF estimate of tip orientation was thus based almost entirely on our kinematic model of needle steering, whereas the UKF estimate of tip position was based on both the kinematic model and the segmentation results. This is shown by the UKF gains $K_{00}$ and $K_{33}$, which represent how heavily measurements $z_0$ and $z_3$ are weighted versus the corresponding process model outputs at each iteration. As shown by the control inputs, the robot made a large initial rotation to steer the needle towards the target, then made small corrections as a result of the steering variability (process noise). Once the needle approached the target, larger rotations and tighter path radii were necessary to correct for variations. At the end of the trial the needle tip was 0.83 mm from the target.    
 
-\subsubsection{3D-Ultrasound-Guided Needle Steering Experiments}
+\subsection{3D-Ultrasound-Guided Needle Steering Experiments}
 Table~\ref{table:Targeting Results} lists final tip placement error for each closed-loop steering test. Over six tests using the UKF, the average error was 2.69 mm. This is within one standard deviation of the mean simulation result, and approaches an acceptable error for clinical applications. Over six tests without the UKF, the average error was 11.39 mm, which is also within one standard deviation of the mean simulation result. The robot executed between nine and twelve incremental insertions in each test. 
 
 \begin{table}[!h]
