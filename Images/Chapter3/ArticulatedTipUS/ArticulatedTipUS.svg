@@ -16,10 +16,10 @@
    width="315"
    height="360"
    xml:space="preserve"
-   sodipodi:docname="ArticulatedTipUS.pdf"><metadata
+   sodipodi:docname="ArticulatedTipUS.svg"><metadata
      id="metadata8"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
      id="defs6"><clipPath
    clipPathUnits="userSpaceOnUse"
    id="clipPath18"><path
@@ -1656,7 +1656,10 @@
 
 
 
-</defs><sodipodi:namedview
+<inkscape:path-effect
+   effect="spiro"
+   id="path-effect13612-2-1"
+   is_visible="true" /></defs><sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1"
@@ -1665,17 +1668,17 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1080"
-     inkscape:window-height="1898"
+     inkscape:window-width="1858"
+     inkscape:window-height="1058"
      id="namedview4"
      showgrid="false"
-     inkscape:zoom="1.5408735"
-     inkscape:cx="116.74705"
-     inkscape:cy="112.31729"
-     inkscape:window-x="3512"
-     inkscape:window-y="-8"
+     inkscape:zoom="2.1791242"
+     inkscape:cx="104.95845"
+     inkscape:cy="106.00926"
+     inkscape:window-x="1592"
+     inkscape:window-y="162"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g12"
+     inkscape:current-layer="g80645"
      units="in" /><g
      id="g10"
      inkscape:groupmode="layer"
@@ -1714,6 +1717,7 @@
      sodipodi:role="line"
      id="tspan7077-4">Straight Configuration</tspan></text>
 
+
 <text
    id="text7075-7-3"
    x="550.66302"
@@ -1726,6 +1730,7 @@
      sodipodi:role="line"
      id="tspan7077-4-7">tip</tspan></text>
 
+
 <text
    id="text7075-7-3-1"
    x="871.08325"
@@ -1737,6 +1742,7 @@
      style="font-size:96px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times-Roman"
      sodipodi:role="line"
      id="tspan7077-4-7-1">hinge</tspan></text>
+
 
 <text
    id="text7075-7-3-1-2"
@@ -1751,6 +1757,7 @@
      style="font-size:96px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times-Roman"
      sodipodi:role="line"
      id="tspan7077-4-7-1-1">shaft</tspan></text>
+
 
 <path
    style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -1797,29 +1804,31 @@
      x="887.41406"
      y="-663.15234" /></text>
 
+
 <text
    transform="scale(1,-1)"
    id="text3425"
    style="font-size:60.72694778px;font-style:italic;font-weight:normal;text-align:start;text-anchor:start;fill:#ffffff;stroke:none;font-family:Calibri"
-   y="5.8361411"
-   x="644.54169"
+   y="-25.315022"
+   x="665.30914"
    xml:space="preserve"><tspan
      style="font-size:96px;fill:#ffffff;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
      id="tspan4462">α</tspan></text>
 
+
 <path
    sodipodi:nodetypes="cc"
    inkscape:connector-curvature="0"
-   inkscape:original-d="m 397.83634,-88.19514 677.90586,33.06565"
+   inkscape:original-d="m 507.97233,-97.373139 c 108.30039,-78.930791 586.12587,58.764047 586.12587,58.764047"
    inkscape:path-effect="#path-effect13612-2"
    id="path13610"
-   d="m 397.83634,-88.19514 677.90586,33.06565"
+   d="m 507.97233,-97.373139 586.12587,58.764047"
    style="fill:none;stroke:#ffffff;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20, 20;stroke-dashoffset:0" /><path
    sodipodi:open="true"
-   sodipodi:end="3.6033376"
-   sodipodi:start="3.0802296"
+   sodipodi:end="3.7596677"
+   sodipodi:start="3.1213278"
    transform="matrix(17.630218,0,0,-10.856554,-1036.6758,646.77601)"
-   d="M 101.59791,66.189888 C 101.40828,61.1779 102.03367,56.17306 103.41134,51.677484"
+   d="m 101.56835,65.014171 a 17.633272,28.633358 0 0 1 3.25861,-17.172309"
    sodipodi:ry="28.633358"
    sodipodi:rx="17.633272"
    sodipodi:cy="64.43396"
@@ -1838,6 +1847,7 @@
      x="983.08325"
      y="-331.25958">hinge</tspan></text>
 
+
 <text
    transform="scale(1,-1)"
    inkscape:transform-center-y="20.242667"
@@ -1852,6 +1862,7 @@
      x="1577.0632"
      y="-331.25958">shaft</tspan></text>
 
+
 <path
    inkscape:connector-curvature="0"
    id="path11320-7-8"
@@ -1860,7 +1871,14 @@
    inkscape:connector-curvature="0"
    id="path11320-4-2"
    d="m 1674.6867,35.220449 0,252.101791"
-   style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" /></g><rect
+   style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" /><path
+   sodipodi:nodetypes="cc"
+   inkscape:connector-curvature="0"
+   inkscape:original-d="M 599.03857,257.66944 1093.3844,-36.00173"
+   inkscape:path-effect="#path-effect13612-2-1"
+   id="path13610-7"
+   d="M 599.03857,257.66944 1093.3844,-36.00173"
+   style="fill:none;stroke:#ffffff;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20, 20;stroke-dashoffset:0" /></g><rect
    style="opacity:0.95999995000000005;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
    id="rect80039"
    width="4094.7517"
