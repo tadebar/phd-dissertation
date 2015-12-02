@@ -117,7 +117,7 @@ Since the effect of process noise on the state transition is nonadditive, we inc
 \section{Experimental Validation}
 %======================================================================
 \label{sec:AutonomousControl}
-Application of the UKF requires an understanding of the relative amounts of uncertainty (\textit{i.e.}, noise) in the evolution of the state (process noise) and the measurement of the state (measurement noise). To quantify the process and measurement noise involved in 3D-ultrasound-guided needle steering, we first performed experimental measurements using samples of \textit{ex vivo} porcine liver tissue. We then validated our estimation scheme in simulated needle steering trials, and in bench-top needle steering experiments using the needle steering robot described in Chapter~2.
+Application of the UKF requires an understanding of the relative amounts of uncertainty (i.e., noise) in the evolution of the state (process noise) and the measurement of the state (measurement noise). To quantify the process and measurement noise involved in 3D-ultrasound-guided needle steering, we first performed experimental measurements using samples of \textit{ex vivo} porcine liver tissue. We then validated our estimation scheme in simulated needle steering trials, and in bench-top needle steering experiments using the needle steering robot described in Chapter~2.
 
 \subsection{Quantification of Process and Measurement Noise}
 Process noise was quantified by using a magnetic tracking system to precisely measure the motion of a steerable needle tip during incremental insertion along constant curvature paths. A hollow steerable needle 0.80 mm in diameter was connected to the needle steering robot described in Chapter 2, and a 6DOF sensor attached to a magnetic tracking system (driveBAY; Ascension Technology Corp., Milton, VT) was inserted into the needle tip. The pose of the needle tip after each incremental step was compared with what was expected based on the previous pose and the process model. Denoting the state vector measured by the magnetic tracking system as $\hat{{x}}$, we determined an error vector ${w}$ at each step such that
@@ -130,8 +130,15 @@ The tip position measurements could be used directly, however the tip orientatio
 
 Measurement noise was quantified by comparing automatic segmentation results from repeated 3D ultrasound scans of steerable needles in biological tissue. Between five and eleven repeated scans were performed for each of six needle tip poses. The needles were automatically segmented from each scan using the previously Doppler method described in Chapter 2. Data analysis was again performed offline in Matlab.
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{Images/Chapter4/UKFBlockDiagram/UKFBlockDiagram}%
+\caption[Block diagram of closed-loop control algorithm with UKF]{Block diagram of closed-loop control using unscented Kalman filter in ultrasound-guided needle steering. Automatic segmentation of the needle from 3D ultrasound data provides a noisy measurement of needle tip pose to the UKF estimation scheme. The output of the estimation scheme is interpreted by a steering controller, which identifies the needle rotation and curvature necessary to reach a target point. A duty-cycle controller generates the velocity commands that allow motor control hardware to move the needle tip along the desired path to the target.}
+\label{fig:UKFBlockDiagram}
+\end{figure}
+
 \subsection{Needle Steering Simulations}
-We first evaluated our UKF algorithm in a series of simulated closed-loop needle steering trials. These simulations allowed us to compare our UKF results with the true needle tip state, which was not possible in the experiments described in the next section. In each trial, a target tip position and initial tip pose were identified in the 3D ultrasound coordinate system, and the needle tip was steered towards the target along a 3D path. Four initial scans were simulated to allow the UKF estimate to converge. Afterwards, the needle was steered in constant 3-mm incremental insertions using the UKF-filtered segmentation results to correct the needle rotation and path radius settings at each step. To provide a comparison baseline, each trial was also repeated using the unfiltered segmentation results as control feedback. 
+We first evaluated our UKF algorithm in a series of simulated closed-loop needle steering trials. These simulations allowed us to compare our UKF results with the true needle tip state, which was not possible in the experiments described in the next section. In each trial, a target tip position and initial tip pose were identified in the 3D ultrasound coordinate system, and the needle tip was steered towards the target along a 3D path. Four initial scans were simulated to allow the UKF estimate to converge. Afterwards, the needle was steered in constant 3-mm incremental insertions using the UKF-filtered segmentation results to correct the needle rotation and path radius settings at each step. The closed-loop control approach was as described in Chapter~2, with the addition of the UKF estimation scheme. Fig.~\ref{fig:UKFBlockDiagram} shows a block diagram. To provide a comparison baseline, each trial was also repeated using the unfiltered segmentation results as control feedback. 
 
 The target point ${t}$ was varied according to a uniform distribution:
 \begin{align}
@@ -152,7 +159,7 @@ Initial needle tip orientation was varied according to a normal distribution:
 Simulations were implemented in Matlab.
 
 \subsection{Needle Steering Experiments}
-In addition to simulation tests, we performed a series of closed-loop needle steering experiments. The robot steered a 0.58 mm needle with a bevel tip in \textit{ex vivo} porcine liver tissue under 3D ultrasound guidance. The UKF algorithm was implemented in C++ and combined with algorithms for Doppler image segmentation. A SonixMDP ultrasound console (Ultrasonix Medical Corp., Richmond, Canada) with a convex mechanical 3D transducer (4DC7-3/40) was used for imaging. Similar to the simulated trials, a target was defined in the 3D ultrasound coordinate system and the needle was steered in constant 5-mm incremental insertions using sensor feedback to correct the needle rotation and path radius settings at each step. For comparison, six steering tests each were performed with and without the UKF.
+In addition to simulation tests, we performed a series of closed-loop needle steering experiments. The robot steered a 0.58 mm needle with a bevel tip in \textit{ex vivo} porcine liver tissue under 3D ultrasound guidance. The UKF algorithm was implemented in C++ and combined with algorithms for Doppler image segmentation. A SonixMDP ultrasound console (Ultrasonix Medical Corp., Richmond, Canada) with a convex mechanical 3D transducer (4DC7-3/40) was used for imaging. Similar to the simulated trials, a target was defined in the 3D ultrasound coordinate system and the needle was steered in constant 5-mm incremental insertions using the UKF estimate to correct the needle rotation and path radius settings at each step. For comparison, six steering tests each were performed with and without the UKF.
 
 \section{Results}
 \subsection{Quantification of Process and Measurement Noise}
@@ -206,7 +213,7 @@ Over 10,000 simulation trials, the average error (mean~$\pm$~standard deviation)
 \label{fig:SimulationResults}
 \end{figure}   
 
-Fig.~\ref{fig:Noise} shows experimental histograms of process and measurement noise for the first components of position and orientation (\textit{i.e.}, $p_0$ and $r_0$) compared to normal distributions with the same variance. In our needle steering simulations, we modeled the process and measurement noise as normally distributed, with zero mean and covariance equal to ${\hat{Q}}$ and ${\hat{R}}$ as defined above.
+Fig.~\ref{fig:Noise} shows experimental histograms of process and measurement noise for the first components of position and orientation (i.e., $p_0$ and $r_0$) compared to normal distributions with the same variance. In our needle steering simulations, we modeled the process and measurement noise as normally distributed, with zero mean and covariance equal to ${\hat{Q}}$ and ${\hat{R}}$ as defined above.
 
 \begin{figure}[!t]
 \centering
