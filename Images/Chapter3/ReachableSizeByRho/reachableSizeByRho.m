@@ -50,8 +50,9 @@ plot(rho,Paccessible{1},'k-','LineWidth',3);
 plot(rho,Paccessible{2},'k--','LineWidth',3);
 plot(rho,Paccessible{3},'-.','LineWidth',3,'color',[.7 .7 .7]);
 
-xlabel('\it\rho\rm_{min}');
-ylabel('|\itR^{(i)}\rm|/|\itL\rm|');
+xlabel('\it\rho\rm');
+ylabel('$|R^{(i)}|/|L|$',...
+        'Interpreter','latex');
 
 set(gca,'XLim',[10 200]);
 set(gca,'XTick',20:20:180);

@@ -13,7 +13,7 @@ This chapter is divided into two main sections. Section~\ref{sec:UKF} describes 
 %======================================================================
 \label{sec:UKF}
 \subsection{Needle Steering Model}
-Our kinematic model of needle steering is based on the unicycle model of steerable needle motion~\cite{Webster2006,Park2005}; we assume the needle travels along curved path sections that are tangent to each other. To begin, we define the needle tip frame. As shown in Fig.~\ref{fig:NeedleKinematics}, this frame is attached to the tip of the steerable needle, and oriented so that its \textit{z}-axis is tangent to the needle at the tip, and its \textit{y}-axis points towards the center of curvature. In this model, the state of the needle is described by the pose of the needle tip frame relative to a reference frame, in our case the 3D ultrasound frame or robot frame. 
+Our kinematic model of needle steering is based on the unicycle model of steerable needle motion~\cite{Webster2006,Park2005}; we assume the needle travels along curved path sections that are tangent to each other. In this model, the state of the needle is described by the pose of the needle tip frame relative to a reference frame, in our case the 3D ultrasound frame or robot frame. As in Chapter 2, we define the needle tip frame as shown in Fig.~\ref{fig:NeedleKinematics}. The frame is attached to the tip of the steerable needle, and oriented so that its \textit{z} axis is tangent to the needle at the tip, and its \textit{y} axis points towards the center of curvature. 
 
 \subsubsection{Needle State Representation}
 Needle tip position is represented by a vector ${p} \in \mathbb{R}^3$. There are several possible representations of tip orientation, including quaternions, Euler angles, and axis-angle rotation vectors. We have elected to use a rotation matrix ${R} \in \textrm{SO(3)}$. This is a singularity-free representation. To describe differential rotations, we will also frequently use the axis-angle rotation vector representation $r \in \textrm{so(3)}$, which can be calculated directly from ${R}$. The state ${x}$ is thus defined as
@@ -24,7 +24,7 @@ Needle tip position is represented by a vector ${p} \in \mathbb{R}^3$. There are
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{Images/Chapter4/NeedleKinematics/NeedleKinematics}%
-\caption[Kinematic model of needle steering]{Kinematic model of needle steering~\cite{Webster2006} used in image-guided control: (a) Needle tip frame. The $z$-axis is tangent to the needle at the tip (ignoring the bevel or prebent section), the $y$-axis points towards the center of curvature. The needle path is an arc within the $y$-$z$ plane with radius $\rho$ and arc length $\delta l$. (b) Progression of the needle tip frame during steering. The steerable needle insertion is divided into increments, with incremental needle rotation angle ($\delta\theta$), incremental insertion distance ($\delta l$) and radius of curvature ($\rho$) updated as command inputs between increments. These command inputs define the transition of state vector ${x}$.}
+\caption[Kinematic model of needle steering]{Kinematic model of needle steering~\cite{Webster2006} used in image-guided control: (a) Needle tip frame. The $z$-axis is tangent to the needle at the tip (ignoring the bevel or prebent section), the $y$-axis points towards the center of curvature. The needle path is an arc within the $y$-$z$ plane with radius $\rho_\text{des}$ and arc length $\delta l$. (b) Progression of the needle tip frame during steering. The steerable needle insertion is divided into increments, with incremental needle rotation angle ($\delta\theta$), incremental insertion distance ($\delta l$) and radius of curvature ($\rho_\text{des}$) updated as command inputs between increments. These command inputs define the transition of state vector ${x}$.}
 \label{fig:NeedleKinematics}
 \end{figure*}
 
@@ -33,21 +33,21 @@ Based on the kinematic model of needle steering~\cite{Webster2006}, we define th
 \begin{align}
 {x_{k+1}} = f({x_k}, {u_k}, {w}).
 \end{align}
-In our model, we divide needle steering into incremental insertions. Command inputs are applied between incremental insertions, and include change in needle base rotation $\delta\theta$, incremental insertion distance $\delta l$, and radius of incremental needle path $\rho$:
+In our model, we divide needle steering into incremental insertions. Command inputs are applied between incremental insertions, and include change in needle base rotation $\delta\theta$, incremental insertion distance $\delta l$, and desired radius of needle path $\rho_\text{des}$:
 \begin{align}
-{u} = \begin{bmatrix} \delta\theta & \delta l & \rho\end{bmatrix}^{\text{T}}.
+{u} = \begin{bmatrix} \delta\theta & \delta l & \rho_\text{des}\end{bmatrix}^{\text{T}}.
 \end{align}
-The radius of the needle path can be experimentally measured as described in the previous chapters. The radius can also be adjusted using duty cycling~\cite{Minhas2007}, a control approach that uses short, variable periods of insertion with and without rotation to adjust needle curvature from maximum curvature to straight. System variability is modeled using nonadditive Gaussian noise in the state transition model. The noise ${w}$ can be separated into a position component, ${p_w} \in \mathbb{R}^3$, and an orientation component, ${R_w} \in SO(3)$. The index $k$ is omitted from the vector ${w}$ to signify the random nature of the vector.
+As discussed in Chapter 2, the radius of the needle path can be increased from its minimum value $\rho$ to $\rho_\text{des}$ using duty cycling~\cite{Minhas2007}. System variability is modeled using nonadditive Gaussian noise in the state transition model. Noise ${w}$ can be separated into a position component, ${p_w} \in \mathbb{R}^3$, and an orientation component, ${R_w} \in SO(3)$. The index $k$ is omitted from ${w}$ to signify the random nature of the vector.
 
 The state transition function $f$ can be viewed as a transformation of the tip frame, as shown in Fig.~\ref{fig:NeedleKinematics}. The needle tip frame at time ${k}$ has pose defined by ${p_{k}}$ and ${R_{k}}$. The needle tip frame is first rotated about its $z$-axis by $\delta\theta$ to yield the rotated tip frame:
 \begin{align}
 {R_{k'}} = {R_{k}}{Rz}(\delta\theta).
 \end{align}
-The needle is then inserted a distance $\delta l$, with the tip following a circular path of radius $\rho$. From the definition of the tip frame shown in Fig.~\ref{fig:NeedleKinematics}, we know that the needle path will lie in the $y$-$z$ plane of the rotated frame defined by ${R_{k'}}$. The position of the needle tip after insertion relative to the rotated frame can be found directly from the geometry of the circular path:
+The needle is then inserted a distance $\delta l$, with the tip following a circular path. From the definition of the tip frame shown in Fig.~\ref{fig:NeedleKinematics}, we know that the needle path will lie in the $y$-$z$ plane of the rotated frame defined by ${R_{k'}}$. The position of the needle tip after insertion relative to the rotated frame can be found directly from the geometry of the circular path:
 \begin{align}
-{^{k'}p_{k+1}} = \begin{bmatrix}0\\ \rho(1-\cos(\frac{\delta l}{\rho})) \\ \rho\sin(\frac{\delta l}{\rho})\end{bmatrix}.
+{^{k'}p_{k+1}} = \begin{bmatrix}0\\ \rho_\text{des}(1-\cos(\frac{\delta l}{\rho_\text{des}})) \\ \rho_\text{des}\sin(\frac{\delta l}{\rho_\text{des}})\end{bmatrix}.
 \end{align}
-Transforming this vector into the world frame, and including process noise yields an expression for $p_{k+1}$:
+Transforming this vector into the world frame, and including process noise, yields an expression for $p_{k+1}$:
 \begin{align}
 {p_{k+1}} = {R_{k}}{Rz}(\delta\theta){^{k'}p_{k+1}}+{p_k} +{p_w}.
 \end{align}
@@ -57,7 +57,7 @@ Transforming this vector into the world frame, and including process noise yield
 The orientation of the tip frame after insertion can be defined using the same rotation matrices. Similar to other studies that have applied Kalman filters to orientation representations~\cite{Kraft2003}, we include orientation noise as an initial disturbance to the state vector, ${R_w}$.
 The updated tip frame orientation is thus
 \begin{align}
-{R_{k+1}} = {R_{k}}{R_w}{Rz}(\delta\theta){Rx}\left(\begin{matrix}-\frac{\delta l}{\rho}\end{matrix}\right).
+{R_{k+1}} = {R_{k}}{R_w}{Rz}(\delta\theta){Rx}\left(\begin{matrix}-\frac{\delta l}{\rho_\text{des}}\end{matrix}\right).
 \end{align}
 The vector ${r_{k+1}}$ is the rotation vector equivalent of ${R_{k+1}}$.
 
@@ -69,10 +69,10 @@ Based on our 3D ultrasound needle segmentation method~\cite{Adebar2013}, we defi
 This model assumes that the automatic or manual segmentation method can measure the full 6DOF pose of the needle tip frame. Although rotation around the axis of a needle can not generally be resolved by 3D ultrasound, in the case of a curved steerable needle we can use the direction of needle curvature to estimate the $y$-axis of the needle frame.
 
 \subsection{Unscented Kalman Filter}
-The unscented Kalman Filter is an extension of the classical Kalman filter to nonlinear systems, and uses a set of sampled points around a mean value to represent distributions~\cite{Julier1997}. For brevity, we omit a detailed description of the typical UKF, and refer the reader to~\cite{Thrun2005} for a complete explanation. Our implementation of the UKF follows the original description of the algorithm~\cite{Julier1997}, with several modifications as described below. 
+The unscented Kalman Filter is an extension of the classical Kalman filter to nonlinear systems, and uses a set of sampled Sigma points around a mean value to represent distributions~\cite{Julier1997}. For brevity, we omit a detailed description of the typical UKF, and refer the reader to~\cite{Thrun2005} for a complete explanation. Our implementation of the UKF follows the original description of the algorithm~\cite{Julier1997}, with several modifications as described below. 
 
 \subsubsection{Calculation of the Mean}
-The first modification is our method for calculating the mean $\overline{x}$ of a set of states $x_0 \dots x_k$. In the UKF, this method is used to recover the mean and covariance of the state estimate from a set of transformed sigma points. Normally in a UKF, the state exists in a vector space, and can be represented by a vector $x \in R^n$. The mean of a set of vector states can be calculated as the sum of the states divided by the size of the set,
+The first modification is our method for calculating the mean $\overline{x}$ of a set of states $x_0 \dots x_k$. In the UKF, this method is used to recover the mean and covariance of the state estimate from a set of transformed Sigma points. Normally in a UKF, the state exists in a vector space, and can be represented by a vector $x \in R^n$. The mean of a set of vector states can be calculated as the sum of the states divided by the size of the set,
 \begin{align}
 \overline{x} = \frac{1}{k}\sum\limits_{i=1}^{k} x_i,
 \end{align}
@@ -120,13 +120,13 @@ Since the effect of process noise on the state transition is nonadditive, we inc
 Application of the UKF requires an understanding of the relative amounts of uncertainty (i.e., noise) in the evolution of the state (process noise) and the measurement of the state (measurement noise). To quantify the process and measurement noise involved in 3D-ultrasound-guided needle steering, we first performed experimental measurements using samples of \textit{ex vivo} porcine liver tissue. We then validated our estimation scheme in simulated needle steering trials, and in bench-top needle steering experiments using the needle steering robot described in Chapter~2.
 
 \subsection{Quantification of Process and Measurement Noise}
-Process noise was quantified by using a magnetic tracking system to precisely measure the motion of a steerable needle tip during incremental insertion along constant curvature paths. A hollow steerable needle 0.80 mm in diameter was connected to the needle steering robot described in Chapter 2, and a 6DOF sensor attached to a magnetic tracking system (driveBAY; Ascension Technology Corp., Milton, VT) was inserted into the needle tip. The pose of the needle tip after each incremental step was compared with what was expected based on the previous pose and the process model. Denoting the state vector measured by the magnetic tracking system as $\hat{{x}}$, we determined an error vector ${w}$ at each step such that
+Process noise was quantified by using a magnetic tracking system to precisely measure the motion of a steerable needle tip during incremental insertion along constant curvature paths. A hollow steerable needle 0.80~mm in diameter was connected to the needle steering robot described in Chapter 2, and a 6DOF sensor attached to a magnetic tracking system (driveBAY; Ascension Technology Corp., Milton, VT) was inserted into the needle tip. The pose of the needle tip after each incremental step was compared with what was expected based on the previous pose and the process model. Denoting the state vector measured by the magnetic tracking system as $\hat{{x}}$, we determined an error vector ${w}$ at each step such that
 \begin{align}
 {\hat{x}_{k+1}} = f({\hat{x}_{k}}, {u_{\text{est}}}, {w}).
 \end{align}
-During these experiments, input vector ${u_{\text{est}}}$ was held constant at $[0, \text{3 mm}, \rho_{\text{est}}]^{T}$. The needle was inserted along four paths, with between fifteen and twenty measured positions per path. Initial tip frame orientation was measured by fitting a circular arc to the set of measured positions, and identifying the vectors tangent ($z$-axis) and normal ($x$-axis) to the arc at the initial tip position. Data analysis was performed offline using Matlab. 
+During these experiments, input vector ${u_{\text{est}}}$ was held constant at $[0, \text{3 mm}, \rho]^{T}$. The needle was inserted along four paths, with between fifteen and twenty measurements each. Initial tip orientation was measured by fitting an arc to the set of measured positions, and identifying the vectors tangent ($z$ axis) and normal ($x$ axis) to the arc at the initial tip position. Data analysis was performed offline using Matlab. 
 
-The tip position measurements could be used directly, however the tip orientation measurements had to first be adjusted to conform to the definition of the needle tip frame given above. Specifically, the measured z-axis was aligned with the needle axis, but the measured x-axis and y-axis were not. To correct the orientation, a circular arc was fit to the measured tip points from each insertion, yielding an estimated radius of curvature $\rho_{est}$. The mean difference between the measured x-axes and the normal to the circular arc was used to correct the orientation measurements to be consistent with the needle tip frame.
+The tip position measurements could be used directly, however the tip orientation measurements had to first be adjusted to conform to the definition of the needle tip frame given above. Specifically, the measured $z$ axis was aligned with the needle axis, but the measured $x$ axis and $y$ axis were not. To correct the orientation, a circular arc was fit to the measured tip points from each insertion, yielding a measurement of radius of curvature $\rho$. The mean difference between the measured $x$ axes and the normal to the circular arc was used to correct the orientation measurements to be consistent with the needle tip frame.
 
 Measurement noise was quantified by comparing automatic segmentation results from repeated 3D ultrasound scans of steerable needles in biological tissue. Between five and eleven repeated scans were performed for each of six needle tip poses. The needles were automatically segmented from each scan using the previously Doppler method described in Chapter 2. Data analysis was again performed offline in Matlab.
 
@@ -138,7 +138,7 @@ Measurement noise was quantified by comparing automatic segmentation results fro
 \end{figure}
 
 \subsection{Needle Steering Simulations}
-We first evaluated our UKF algorithm in a series of simulated closed-loop needle steering trials. These simulations allowed us to compare our UKF results with the true needle tip state, which was not possible in the experiments described in the next section. In each trial, a target tip position and initial tip pose were identified in the 3D ultrasound coordinate system, and the needle tip was steered towards the target along a 3D path. Four initial scans were simulated to allow the UKF estimate to converge. Afterwards, the needle was steered in constant 3-mm incremental insertions using the UKF-filtered segmentation results to correct the needle rotation and path radius settings at each step. The closed-loop control approach was as described in Chapter~2, with the addition of the UKF estimation scheme. Fig.~\ref{fig:UKFBlockDiagram} shows a block diagram. To provide a comparison baseline, each trial was also repeated using the unfiltered segmentation results as control feedback. 
+We first evaluated our UKF algorithm in a series of simulated closed-loop needle steering trials. These simulations allowed us to compare our UKF results with the true needle tip state, which was not possible in the experiments described in the next section. In each trial, a target tip position and initial tip pose were identified in the 3D ultrasound coordinate system, and the needle tip was steered towards the target along a 3D path. Four initial scans were simulated to allow the UKF estimate to converge. Afterwards, the needle was steered in constant 3-mm incremental insertions using the UKF-filtered segmentation results to correct the needle rotation and path radius settings at each step. The closed-loop control approach was as described in Chapter~2, with the addition of the UKF estimation scheme. Fig.~\ref{fig:UKFBlockDiagram} shows a block diagram of our modified closed-loop control approach with the addition of the unscented Kalman filter. To provide a comparison baseline, each trial was also repeated using the unfiltered segmentation results as control feedback. 
 
 The target point ${t}$ was varied according to a uniform distribution:
 \begin{align}
@@ -208,8 +208,8 @@ Over 10,000 simulation trials, the average error (mean~$\pm$~standard deviation)
 
 \begin{figure}[!h]
 \centering
-\includegraphics[width=0.5\columnwidth]{Images/Chapter4/SimulationResults/SimulationResults}%
-\caption[Needle steering simulation results with UKF.]{Needle steering simulation results. Actual, measured and UKF-estimated state vector elements $p_0$ and $r_0$ are shown for steering towards a target located at $p_0 = 15$. The resulting values of control variables $\delta\theta$ and $\rho$ are also plotted, and represent the control effort needed to overcome process variability inherent to steering in biological tissue. UKF gain values $K_{00}$ and $K_{33}$ show significant reliance on measured needle position, but relatively little reliance on measured needle orientation when forming the UKF estimate. }
+\includegraphics[width=0.8\columnwidth]{Images/Chapter4/SimulationResults/SimulationResults}%
+\caption[Needle steering simulation results with UKF.]{Needle steering simulation results. Actual, measured and UKF-estimated state vector elements $p_0$ and $r_0$ are shown for steering towards a target located at $p_0 = 15$. The resulting values of control variables $\delta\theta$ and $\rho_\text{des}$ are also plotted, and represent the control effort needed to overcome process variability inherent to steering in biological tissue. UKF gain values $K_{00}$ and $K_{33}$ show significant reliance on measured needle position, but relatively little reliance on measured needle orientation when forming the UKF estimate. }
 \label{fig:SimulationResults}
 \end{figure}   
 
@@ -222,7 +222,7 @@ Fig.~\ref{fig:Noise} shows experimental histograms of process and measurement no
 \label{fig:ExperimentalResults}
 \end{figure}
 
-Fig.~\ref{fig:SimulationResults} shows simulation results from using the UKF-filtered segmentation data in closed-loop steering towards a target. The figure shows actual, measured and estimated values for two state elements (again $p_0$ and $r_0$), along with resulting control inputs ($\delta\theta$ and $\rho$) and UKF gains. In this simulation, the needle tip was steered from a point with $p_0 = 0$ towards a point at $p_0 = 15$. As seen in the figure, the UKF approach accurately estimated the true position and orientation despite large amounts of measurement noise, particularly in orientation. As mentioned above, the segmentation method we apply is based on measuring the centroid of irregular Doppler patches around the needle, and gives a relatively poor indication of needle tip orientation. The UKF estimate of tip orientation was thus based almost entirely on our kinematic model of needle steering, whereas the UKF estimate of tip position was based on both the kinematic model and the segmentation results. This is shown by the UKF gains $K_{00}$ and $K_{33}$, which represent how heavily measurements $z_0$ and $z_3$ are weighted versus the corresponding process model outputs at each iteration. As shown by the control inputs, the robot made a large initial rotation to steer the needle towards the target, then made small corrections as a result of the steering variability (process noise). Once the needle approached the target, larger rotations and tighter path radii were necessary to correct for variations. At the end of the trial the needle tip was 0.83 mm from the target.    
+Fig.~\ref{fig:SimulationResults} shows simulation results from using the UKF-filtered segmentation data in closed-loop steering towards a target. The figure shows actual, measured and estimated values for two state elements (again $p_0$ and $r_0$), along with resulting control inputs ($\delta\theta$ and $\rho_\text{des}$) and UKF gains. In this simulation, the needle tip was steered from a point with $p_0 = 0$ towards a point at $p_0 = 15$. As seen in the figure, the UKF approach accurately estimated the true position and orientation despite large amounts of measurement noise, particularly in orientation. As mentioned above, the segmentation method we apply is based on measuring the centroid of irregular Doppler patches around the needle, and gives a relatively poor indication of needle tip orientation. The UKF estimate of tip orientation was thus based almost entirely on our kinematic model of needle steering, whereas the UKF estimate of tip position was based on both the kinematic model and the segmentation results. This is shown by the UKF gains $K_{00}$ and $K_{33}$, which represent how heavily measurements $z_0$ and $z_3$ are weighted versus the corresponding process model outputs at each iteration. As shown by the control inputs, the robot made a large initial rotation to steer the needle towards the target, then made small corrections as a result of the steering variability (process noise). Once the needle approached the target, larger rotations and tighter path radii were necessary to correct for variations. At the end of the trial the needle tip was 0.83 mm from the target.    
 
 \subsection{Needle Steering Experiments}
 Table~\ref{table:Targeting Results} lists final tip placement error for each closed-loop steering test. Over six tests using the UKF, the average error was 2.69 mm. This is within one standard deviation of the mean simulation result, and approaches an acceptable error for clinical applications. Over six tests without the UKF, the average error was 11.39 mm, which is also within one standard deviation of the mean simulation result. The robot executed between nine and twelve incremental insertions in each test. 
@@ -231,7 +231,7 @@ Table~\ref{table:Targeting Results} lists final tip placement error for each clo
 % increase table row spacing, adjust to taste
 \renewcommand{\arraystretch}{1.3}
 \centering
-\caption{Tip placement errors in needle steering experiments}
+\caption{Tip placement errors in UKF needle steering experiments}
 \label{table:Targeting Results}
 % Some packages, such as MDW tools, offer better commands for making tables
 % than the plain LaTeX2e tabular which is used here.
